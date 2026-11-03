@@ -26,13 +26,13 @@ int main()
 		cin >> choice;
 
 		if (choice == 'u')
-			move_up(board, size);
+			move_board(board, size, 1);
 		else if (choice == 'd')
-			move_down(board, size);
+			move_board(board, size, 3);
 		else if (choice == 'l')
-			move_left(board, size);
+			move_board(board, size, 4);
 		else if (choice == 'r')
-			move_right(board, size);
+			move_board(board, size, 2);
 
 		insert_random(board, size);
 		print_board(board);
