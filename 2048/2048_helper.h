@@ -4,9 +4,9 @@
 using namespace std;
 
 // global variables
-bool valid_move_input = true;
+bool board_changed = true;
 bool board_no_more_moves = false;
-int board_merge_score{}; 
+int board_merge_score{};
 int board_valid_moves_counted{};
 
 // Moves all tiles in the board with a given direction, merging equal tiles according to 2048 game rules.
@@ -16,25 +16,26 @@ int board_valid_moves_counted{};
 //	 direction: behavior in which tiles translate (default is left)
 void move_board(int board[][5], int numrows = 5, int direction = 4)
 {
-	++board_valid_moves_counted;
-
 	// init
 	int bound_x{}, bound_y{};
 	int trans_x{}, trans_y{};
+	int move_blocked_index{};
+	board_changed = false;
+
 	switch (direction)
 	{
 		case 1:	// move up
 			trans_x = 0, trans_y = 1;
-										break;
+															break;
 		case 2:	// move right
 			trans_x = -1, trans_y = 0;
-			bound_x = 4; 				break;
+			bound_x = 4; 									break;
 		case 3: // move down
 			trans_x = 0, trans_y = -1;
-			bound_y = 4; 				break;
+			bound_y = 4; 									break;
 		case 4: // left
 			trans_x = 1, trans_y = 0; 
-										break;
+															break;
 
 	}
 	int next_x = (bound_x + trans_x),
@@ -78,6 +79,7 @@ void move_board(int board[][5], int numrows = 5, int direction = 4)
 			{
 				*bound_tile = *next_tile;
 				*next_tile = 0;
+				board_changed = true;
 			}
 			// moving tile can merge with leftMost tile
 			else if (*bound_tile == *next_tile)
@@ -86,6 +88,7 @@ void move_board(int board[][5], int numrows = 5, int direction = 4)
 				board_merge_score += *bound_tile;	// increment score after merge
 				*next_tile = 0;
 				bound_x += trans_x, bound_y += trans_y;
+				board_changed = true;
 			}
 			// moving tile does not match, it bumps into leftMost tile
 			else			
@@ -97,12 +100,16 @@ void move_board(int board[][5], int numrows = 5, int direction = 4)
 				{
 					*bound_tile = *next_tile;
 					*next_tile = 0;
+					board_changed = true;
 				}
 			}
 		}
 
 		next_x += trans_x, next_y += trans_y;
 	}
+
+	// counts move and updates its status
+	if (board_changed) ++board_valid_moves_counted;
 }
 
 void print_board(int board[][5], int numrows = 5)
@@ -143,7 +150,7 @@ void insert_random(int board[][5], int numrows = 5)
 		}
 	}
 
-	if (empty_count > 0)
+	if (empty_count > 0 && board_changed)
 	{
 		while (true)
 		{
@@ -158,10 +165,40 @@ void insert_random(int board[][5], int numrows = 5)
 				break;
 			}
 		}
-
 	}
-	else
+	else if (empty_count == 0)
+	{
+		int* center_tile = &board[0][0];
 		board_no_more_moves = true;
+
+		for (int i = 0; i < 10; ++i)
+		{
+			// when entering a new row, skip it
+			if (i % 5 == 0)
+				center_tile += 5;
+			
+			// no right border and right tile matches with center tile
+			if (((i + 1) % 5 != 0) && (*center_tile == *(center_tile + 1)))
+			{
+				board_no_more_moves = false;
+				break;
+			}
+			// no left border and left border matches with center tile
+			if (((i - 1) % 5 != 0) && (*center_tile == *(center_tile - 1)))
+			{
+				board_no_more_moves = false;
+				break;
+			}
+			// vertical tiles match center tile
+			if (*center_tile == *(center_tile - 5) || *center_tile == *(center_tile + 5))
+			{
+				board_no_more_moves = false;
+				break;
+			}
+
+			++center_tile;
+		}
+	}
 }
 
 // Zeros out entire board and inserts one random tile; The next random tile is from the main loop.
@@ -178,11 +215,11 @@ void new_game(int board[][5], int numrows = 5) {
 		++current_board_tile;
 	}
 
-	insert_random(board, numrows);
-
-	valid_move_input = true;
+	board_changed = true;
 	board_no_more_moves = false;
 	board_merge_score = 0; 
 	board_valid_moves_counted = 0;
+
+	insert_random(board, numrows);
 }
 

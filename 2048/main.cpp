@@ -11,6 +11,7 @@ int main()
 	//print_board(board);
 
 	char choice = 'u';	// initialized input
+	bool valid_move_input = true;
 
 	insert_random(board, size);
 
@@ -50,7 +51,11 @@ int main()
 			cin >> choice;
 
 			if (choice == 'n')
+			{
 				new_game(board, size);
+				valid_move_input = true;
+			}
+
 		}
 
 
