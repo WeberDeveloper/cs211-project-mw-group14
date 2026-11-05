@@ -3,6 +3,12 @@
 #include <iomanip>
 using namespace std;
 
+// global variables
+bool valid_move_input = true;
+bool board_no_more_moves = false;
+int board_merge_score{}; 
+int board_valid_moves_counted{};
+
 // Moves all tiles in the board with a given direction, merging equal tiles according to 2048 game rules.
 // Parameters:
 //   board: a 2D array representing the game board (5x5).
@@ -10,6 +16,7 @@ using namespace std;
 //	 direction: behavior in which tiles translate (default is left)
 void move_board(int board[][5], int numrows = 5, int direction = 4)
 {
+	++board_valid_moves_counted;
 
 	// init
 	int bound_x{}, bound_y{};
@@ -76,6 +83,7 @@ void move_board(int board[][5], int numrows = 5, int direction = 4)
 			else if (*bound_tile == *next_tile)
 			{
 				*bound_tile *= 2;
+				board_merge_score += *bound_tile;	// increment score after merge
 				*next_tile = 0;
 				bound_x += trans_x, bound_y += trans_y;
 			}
@@ -116,7 +124,8 @@ void print_board(int board[][5], int numrows = 5)
 		cout << "\t-----------------------------------------" << endl;
 	}
 
-	cout << "\t" << endl << endl;
+	cout << "\t" << endl;
+	cout << "SCORE: " << board_merge_score << " MOVES: " << board_valid_moves_counted << endl << endl;
 }
 
 
@@ -151,5 +160,29 @@ void insert_random(int board[][5], int numrows = 5)
 		}
 
 	}
+	else
+		board_no_more_moves = true;
+}
+
+// Zeros out entire board and inserts one random tile; The next random tile is from the main loop.
+// Parameters:
+//   board: a 2D array representing the game board (5x5).
+//   numrows: the number of rows in the board (default is 5).
+void new_game(int board[][5], int numrows = 5) {
+	
+	int* current_board_tile = &board[0][0];
+
+	for (int i = 0; i < 25; ++i)
+	{
+		*current_board_tile = 0;
+		++current_board_tile;
+	}
+
+	insert_random(board, numrows);
+
+	valid_move_input = true;
+	board_no_more_moves = false;
+	board_merge_score = 0; 
+	board_valid_moves_counted = 0;
 }
 
