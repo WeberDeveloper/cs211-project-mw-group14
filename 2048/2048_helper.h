@@ -166,31 +166,35 @@ void insert_random(int board[][5], int numrows = 5)
 			}
 		}
 	}
+	// no more open tiles; checks to see if moves are still possible
 	else if (empty_count == 0)
 	{
-		int* center_tile = &board[0][0];
+		int* board_origin = &board[0][0];
+		int* center_tile = board_origin;
 		board_no_more_moves = true;
 
-		for (int i = 0; i < 10; ++i)
-		{
-			// when entering a new row, skip it
-			if (i % 5 == 0)
-				center_tile += 5;
-			
+		for (int i = 0; i < 25; ++i)
+		{	
 			// no right border and right tile matches with center tile
 			if (((i + 1) % 5 != 0) && (*center_tile == *(center_tile + 1)))
 			{
 				board_no_more_moves = false;
 				break;
 			}
-			// no left border and left border matches with center tile
-			if (((i - 1) % 5 != 0) && (*center_tile == *(center_tile - 1)))
+			// no left border and left tile matches with center tile
+			else if (((i - 1) % 5 != 0) && (*center_tile == *(center_tile - 1)))
 			{
 				board_no_more_moves = false;
 				break;
 			}
-			// vertical tiles match center tile
-			if (*center_tile == *(center_tile - 5) || *center_tile == *(center_tile + 5))
+			// no top border and top tile matches with center tile
+			else if (((center_tile - 5 - board_origin) >= 0) && (*center_tile == *(center_tile - 5)))
+			{
+				board_no_more_moves = false;
+				break;
+			}
+			// no bottom border and bottom tile matches with center tile
+			else if (((center_tile + 5 - board_origin) <= 25) && (*center_tile == *(center_tile + 5)))
 			{
 				board_no_more_moves = false;
 				break;

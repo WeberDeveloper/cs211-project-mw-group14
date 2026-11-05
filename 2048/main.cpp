@@ -7,9 +7,6 @@ int main()
 	int size = 5;
 	int board[5][5]{};
 
-	//cout << "Initial Board : [5x5] :" << endl;
-	//print_board(board);
-
 	char choice = 'u';	// initialized input
 	bool valid_move_input = true;
 
