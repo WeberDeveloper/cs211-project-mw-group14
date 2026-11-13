@@ -14,6 +14,7 @@ struct GameState
     int board[5][5]{};
     long long score = 0;
     long long moves = 0;
+	bool lose = false;
 };
 
 // Returns true if a slide or merge changed the board.
@@ -140,10 +141,8 @@ void print_board(int board[][5], int numrows = 5)
 	cout << "\t" << endl << endl;
 }
 
-
-void insert_random(int board[][5], int numrows = 5)
+int count_empty(int board[][5], int numrows = 5)
 {
-	int r, c;
 	//count empty
 	int empty_count = 0;
 	for (int r = 0; r < numrows; r++)
@@ -154,6 +153,15 @@ void insert_random(int board[][5], int numrows = 5)
 				empty_count++;
 		}
 	}
+
+	return empty_count;
+}
+
+
+void insert_random(int board[][5], int numrows = 5)
+{
+	int r, c;
+	int empty_count = count_empty(board, numrows);
 
 	if (empty_count > 0)
 	{
@@ -170,8 +178,55 @@ void insert_random(int board[][5], int numrows = 5)
 				break;
 			}
 		}
-
 	}
+}
+
+
+bool check_merge(int board[][5])
+{
+	int* board_origin = &board[0][0];
+		int* center_tile = board_origin;
+
+		for (int i = 0; i < 25; ++i)
+		{	
+			// no right border and right tile matches with center tile
+			if (((i + 1) % 5 != 0) && (*center_tile == *(center_tile + 1)))
+				return true;
+			// no left border and left tile matches with center tile
+			else if ((i % 5 != 0) && (*center_tile == *(center_tile - 1)))
+				return true;
+			// no top border and top tile matches with center tile
+			else if (((center_tile - 5 - board_origin) >= 0) && (*center_tile == *(center_tile - 5)))
+				return true;
+			// no bottom border and bottom tile matches with center tile
+			else if (((center_tile + 5 - board_origin) <= 25) && (*center_tile == *(center_tile + 5)))
+				return true;
+
+			++center_tile;
+		}
+		return false;
+}
+
+bool check_lose(int board[][5])
+{
+	if (count_empty(board) == 0 && check_merge(board) == false)
+		return true;
+	
+	return false;
+}
+
+bool check_win(int board[][5])
+{
+	int* tile = &board[0][0];
+
+	for (int i = 0; i < 25; ++i)
+	{
+		if (*tile >= 2048)
+			return true;
+
+		++tile;
+	}
+	return false;
 }
 
 
@@ -271,6 +326,13 @@ bool load_game(GameState& game)
     }
 
     game = saved;
+
+	// checks lose state of board
+	if (check_lose(game.board))
+		game.lose = true;
+	else
+		game.lose = false;
+
     cout << "Game loaded.\n";
     return true;
 }
