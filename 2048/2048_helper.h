@@ -25,20 +25,22 @@ bool move_board(int board[][5], int direction, long long& score)
 	bool changed = false;
 	int bound_x{}, bound_y{};
 	int trans_x{}, trans_y{};
+	int move_blocked_index{};
+
 	switch (direction)
 	{
 		case 1:	// move up
 			trans_x = 0, trans_y = 1;
-										break;
+															break;
 		case 2:	// move right
 			trans_x = -1, trans_y = 0;
-			bound_x = 4; 				break;
+			bound_x = 4; 									break;
 		case 3: // move down
 			trans_x = 0, trans_y = -1;
-			bound_y = 4; 				break;
+			bound_y = 4; 									break;
 		case 4: // left
 			trans_x = 1, trans_y = 0; 
-										break;
+															break;
 
 	}
 	int next_x = (bound_x + trans_x),
@@ -90,7 +92,7 @@ bool move_board(int board[][5], int direction, long long& score)
 				if (*bound_tile > numeric_limits<int>::max() / 2 ||
                     score > numeric_limits<long long>::max() - 2LL * *bound_tile)
                 {
-                    cerr << "Merge would exceed the supported tile or score range.\n";
+                    cerr << "\nMerge would exceed the supported tile or score range.\n";
                     return false;
                 }
                 *bound_tile *= 2;
@@ -131,14 +133,12 @@ void print_board(int board[][5], int numrows = 5)
 				cout << "\t|" << right << setw(6) << setfill(' ') << board[r][c];
 			else
 				cout << "\t|" << right << setw(6) << setfill(' ') << " ";
-
-			//cout << board[r][c] << "\t|\t";
 		}
 		cout << "\t|" << endl;
 		cout << "\t-----------------------------------------" << endl;
 	}
 
-	cout << "\t" << endl << endl;
+	cout << "\t" << endl;
 }
 
 int count_empty(int board[][5], int numrows = 5)
@@ -235,7 +235,7 @@ bool save_game(const GameState& game)
     ofstream file("savegame.txt");
     if (!file)
     {
-        cerr << "Could not open savegame.txt for saving.\n";
+        cerr << "\nCould not open savegame.txt for saving.\n";
         return false;
     }
 
@@ -254,11 +254,11 @@ bool save_game(const GameState& game)
     file.close();
     if (!file)
     {
-        cerr << "Could not finish writing savegame.txt.\n";
+        cerr << "\nCould not finish writing savegame.txt.\n";
         return false;
     }
 
-    cout << "Game saved.\n";
+    cout << "\nGame saved.\n";
     return true;
 }
 
@@ -279,7 +279,7 @@ bool load_game(GameState& game)
     ifstream file("savegame.txt");
     if (!file)
     {
-        cerr << "Could not open savegame.txt for loading.\n";
+        cerr << "\nCould not open savegame.txt for loading.\n";
         return false;
     }
 
@@ -287,14 +287,14 @@ bool load_game(GameState& game)
     string marker;
     if (!(file >> marker) || marker != "CS211_2048_V1")
     {
-        cerr << "Invalid save: expected the CS211_2048_V1 marker.\n";
+        cerr << "\nInvalid save: expected the CS211_2048_V1 marker.\n";
         return false;
     }
 
     if (!read_integer(file, saved.score) || saved.score < 0 ||
         !read_integer(file, saved.moves) || saved.moves < 0)
     {
-        cerr << "Invalid save: expected two nonnegative integer counters in range.\n";
+        cerr << "\nInvalid save: expected two nonnegative integer counters in range.\n";
         return false;
     }
 
@@ -306,7 +306,7 @@ bool load_game(GameState& game)
             if (!read_integer(file, tile) ||
                 (tile != 0 && (tile < 2 || (tile & (tile - 1)) != 0)))
             {
-                cerr << "Invalid or missing tile at row " << row + 1
+                cerr << "\nInvalid or missing tile at row " << row + 1
                      << ", column " << col + 1 << ".\n";
                 return false;
             }
@@ -316,12 +316,12 @@ bool load_game(GameState& game)
     string extra;
     if (file >> extra)
     {
-        cerr << "Invalid save: unexpected data after the 25 board cells.\n";
+        cerr << "\nInvalid save: unexpected data after the 25 board cells.\n";
         return false;
     }
     if (file.bad() || !file.eof())
     {
-        cerr << "Could not finish reading savegame.txt.\n";
+        cerr << "\nCould not finish reading savegame.txt.\n";
         return false;
     }
 
@@ -333,6 +333,6 @@ bool load_game(GameState& game)
 	else
 		game.lose = false;
 
-    cout << "Game loaded.\n";
+    cout << "\nGame loaded.\n";
     return true;
 }
