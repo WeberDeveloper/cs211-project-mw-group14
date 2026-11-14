@@ -1,4 +1,5 @@
 #include <iostream>
+#include <limits>
 #include <string>
 
 using namespace std;
@@ -14,6 +15,8 @@ int main()
 
         cout <<"Enter credit card number: ";
         cin >> CN;
+        cin.clear();
+        cin.ignore(numeric_limits<streamsize>::max(), '\n');
 
         cout <<"Credit card number is: "<<CN<<endl;
     
