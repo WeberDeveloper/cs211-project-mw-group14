@@ -22,12 +22,12 @@ After each check, enter y to check another card number or n to end the program.
 
 # Group
 
-Group 25 (Formerly Group 14)
-https://github.com/WeberDeveloper/cs211-project-mw-group14
+- Group 25 (Formerly Group 14)
+- https://github.com/WeberDeveloper/cs211-project-mw-group14
 
 
 # Developers
 
-AsielDimas
-OscarVG8492
-WeberDeveloper
+- AsielDimas
+- OscarVG8492
+- WeberDeveloper
