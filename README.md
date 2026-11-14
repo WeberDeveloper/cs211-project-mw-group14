@@ -28,6 +28,6 @@ After each check, enter y to check another card number or n to end the program.
 
 # Developers
 
-- AsielDimas
-- OscarVG8492
-- WeberDeveloper
+- AsielDimas        - 2048 Save/Load system and code reorganization
+- OscarVG8492       - Luhn Checksum Program
+- WeberDeveloper    - 2048 game logic (move, win, lose conditions)
