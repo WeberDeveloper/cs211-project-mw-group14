@@ -4,7 +4,7 @@ using namespace std;
 
 void print_help()
 {
-    cout << "u/d/l/r: move up/down/left/right; s: save; o: load; h: help; e: exit\n"
+    cout << "\nu/d/l/r: move up/down/left/right; s: save; o: load; h: help; e: exit\n"
          << "Saving writes to savegame.txt in the working directory. "
          << "Saving again replaces the previous save.\n";
 }
@@ -19,6 +19,13 @@ int main()
     while (true)
     {
         print_board(game.board);
+
+        // indicates win/lose condition
+        if (game.lose == true)
+            cout << "Oh no! There are no more moves!\n";
+        else if (check_win(game.board))
+            cout << "YOUR A WINNER! (Reached 2048)\n";
+            
         cout << "Score: " << game.score
              << " | Successful moves: " << game.moves << "\nChoice: ";
 
@@ -36,7 +43,7 @@ int main()
             case 's': save_game(game); continue;
             case 'o': load_game(game); continue;
             case 'h': print_help(); continue;
-            default: cout << "Unknown command. Enter h for help.\n"; continue;
+            default: cout << "\nUnknown command. Enter h for help.\n"; continue;
         }
 
         // Try the move on a copy so an overflow cannot leave a partial move.
@@ -50,6 +57,11 @@ int main()
             }
             ++next.moves;
             insert_random(next.board);
+            game = next;
+        }
+        else if (check_lose(next.board))
+        {
+            next.lose = true;
             game = next;
         }
     }
